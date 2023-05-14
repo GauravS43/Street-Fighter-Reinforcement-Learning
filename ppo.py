@@ -3,8 +3,14 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack
+from json import dump
 import optuna
 import os
+
+
+FRAMES_TRAINED = 100000
+TRIALS = 10
+MATCHES = 10
 
 def optimize_ppo(trial):
     return {
@@ -14,7 +20,6 @@ def optimize_ppo(trial):
         'clip_range': trial.suggest_uniform('clip_range', 0.1, 0.4),
         'gae_lambda': trial.suggest_uniform('gae_lambda', 0.8, 0.99)
     } 
-
 
 def optimize_agent(trial):
     try:
@@ -26,9 +31,9 @@ def optimize_agent(trial):
         env = VecFrameStack(env, 4, channels_order='last')
         
         model = PPO('CnnPolicy', env, tensorboard_log = './logs/', verbose = 0, **model_params)
-        model.learn(total_timesteps = 100000)
+        model.learn(total_timesteps = FRAMES_TRAINED)
         
-        mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=5)
+        mean_reward, _ = evaluate_policy(model, env, n_eval_episodes = MATCHES)
         env.close()
         
         SAVE_PATH = os.path.join('./opt/', 'trial_{}_best_model'.format(trial.number))
@@ -40,6 +45,7 @@ def optimize_agent(trial):
     
 
 study = optuna.create_study(direction = 'maximize')
-study.optimize(optimize_agent, n_trials = 100, n_jobs = 1)
+study.optimize(optimize_agent, n_trials = TRIALS, n_jobs = 1)
 
-#save study.best_params
+with open("best_params.json", "w") as file:
+    dump(study.best_params, file)

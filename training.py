@@ -3,6 +3,7 @@ from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack
 from stable_baselines3 import PPO
+from json import load
 import os
 
 class TrainAndLoggingCallback(BaseCallback):
@@ -25,7 +26,12 @@ class TrainAndLoggingCallback(BaseCallback):
 
 callback = TrainAndLoggingCallback(check_freq=10000, save_path='./train/')
 
-#model_params = study.best_params
+with open("best_params.json", "r") as file:
+    model_params = load(file)
+
+model_params['n_steps'] = 4544
+model_params['learning_rate'] = 5e-6
+
 env = StreetFighter()
 env = Monitor(env, './logs/')
 env = DummyVecEnv([lambda: env])
@@ -33,6 +39,6 @@ env = VecFrameStack(env, 4, channels_order='last')
 
 model = PPO('CnnPolicy', env, tensorboard_log =  './logs/', verbose = 1, **model_params)
 
-model.load('path/to/best_model')
+model.load('./opt/trial_2_best_model.zip')
 
 model.learn(total_timesteps=5000000, callback=callback)

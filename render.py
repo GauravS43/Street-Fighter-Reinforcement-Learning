@@ -14,7 +14,7 @@ from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack
 
 
 # best model
-model = PPO.load('./train/best_model...')
+model = PPO.load('./train/best_model_300000.zip')
 env = StreetFighter()
 env = Monitor(env, './logs/')
 env = DummyVecEnv([lambda: env])
