@@ -6,7 +6,7 @@ The model was trained using Proximal Policy Optimization for **5,000,000** steps
 At its peak, the model is capable of reaching up to Dhalsim. 
 
 <p align="center">
-![gif](trainedSample.gif)
+    <img src="trainedSample.gif" alt="sample run">
 </p>
 
 The above is a sample run of the model.
