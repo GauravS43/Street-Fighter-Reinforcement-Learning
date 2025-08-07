@@ -9,4 +9,4 @@ At its peak, the model is capable of reaching up to Dhalsim in Ryu's arcade mode
     <img src="trainedSample.gif" alt="sample run">
 </p>
 
-Above is a sample run of the model.
+Above is a sample run of the model. (May take time to load)
